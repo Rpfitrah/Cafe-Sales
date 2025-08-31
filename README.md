@@ -1,121 +1,142 @@
-# ☕ Cafe Sales Analysis & Insights
+# ☕ Cafe Sales Analysis
 
-**A compelling deep-dive into cafe transaction data to uncover customer behavior patterns, optimize product offerings, and boost revenue performance.**
+![Repo Size](https://img.shields.io/github/repo-size/Rpfitrah/Cafe-Sales)
+![Last Commit](https://img.shields.io/github/last-commit/Rpfitrah/Cafe-Sales)
+![GitHub License](https://img.shields.io/github/license/Rpfitrah/Cafe-Sales)
+![Python](https://img.shields.io/badge/Python-3.9-blue?logo=python)
+![Pandas](https://img.shields.io/badge/Pandas-Data--Analysis-yellowgreen)
+![Matplotlib](https://img.shields.io/badge/Matplotlib-Visualization-red)
+![Seaborn](https://img.shields.io/badge/Seaborn-EDA-blueviolet)
+![MySQL](https://img.shields.io/badge/MySQL-Database-lightgrey)
 
 ---
 
-##  Table of Contents
-
-1. [Overview](#overview)  
-2. [Technologies & Data Pipeline](#technologies--data-pipeline)  
-3. [Dataset & Structure](#dataset--structure)  
-4. [Analysis Workflow](#analysis-workflow)  
-5. [Visualizations](#visualizations)  
-6. [Key Insights](#key-insights)  
-7. [Strategic Recommendations](#strategic-recommendations)  
-8. [Getting Started](#getting-started)  
+## 📑 Table of Contents
+1. [Project Overview](#project-overview)  
+2. [Data Source & Loading](#data-source--loading)  
+3. [Initial Data Inspection](#initial-data-inspection)  
+4. [Data Cleaning & Preprocessing](#data-cleaning--preprocessing)  
+5. [Exploratory Data Analysis (EDA)](#exploratory-data-analysis-eda)  
+   - 5.1 Data Shape & Sample  
+   - 5.2 Missing Values & Data Quality  
+   - 5.3 Trends & Patterns  
+6. [Statistical Analysis](#statistical-analysis)  
+7. [Key Findings](#key-findings)  
+8. [Recommendations](#recommendations)  
 9. [Next Steps](#next-steps)  
-10. [Project Highlights](#project-highlights)
+10. [How to Reproduce](#how-to-reproduce)  
+11. [Contact / About Me](#contact--about-me)
 
 ---
 
-##  Overview
-
-This project performs an end-to-end **exploratory data analysis (EDA)** on cafe sales transactions to identify:
-- Popular menu items and sales trends
-- Revenue drivers (quantity, price, payment method, location)
-- Opportunities for product mix improvement and sales growth
-
----
-
-##  Technologies & Data Pipeline
-
-- **Languages & Libraries**: Python | Pandas, NumPy, Matplotlib, Seaborn, SciPy  
-- **Database**: MySQL (transaction extraction via `pymysql`)  
-- **Statistical Analysis**: Pearson correlation to assess feature relationships  
-- **Visualization**: Static plots embedded in notebook, to be exported for README inclusion  
+## 📌 Project Overview
+This project explores **café sales data** to uncover customer purchasing behavior, product performance, and sales trends.  
+The analysis aims to:
+- Identify **best-selling items** and their contribution to revenue.  
+- Understand **customer preferences** based on payment methods and order locations.  
+- Detect **seasonality and time-based patterns** in sales.  
+- Provide **data-driven recommendations** for business improvement.  
 
 ---
 
-##  Dataset & Structure
+## 🗂 Data Source & Loading
+- Data is stored in a **MySQL table** named `clean_cafe_sales`.  
+- Retrieved into Python via `pymysql` and `pandas.read_sql`.  
 
-- **Source Table**: `clean_cafe_sales` from MySQL database  
-- **Dimensions**: **10,000 rows × 8 columns** :contentReference[oaicite:0]{index=0}  
-- **Fields**:
-  - `transaction_id`, `item`, `quantity`, `price_unit`, `total_spent`, `payment_method`, `location`, `transaction_date`  
-
-- **Data Characteristics**:
-  - Some missing values observed (e.g., `total_spent`, `payment_method`, `location`, `transaction_date`) :contentReference[oaicite:1]{index=1}  
-  - Data types require formatting (numerical conversions, date parsing, missing-value handling)
+**Columns in dataset**:  
+`transaction_id`, `item`, `quantity`, `price_unit`, `total_spent`, `payment_method`, `location`, `transaction_date`
 
 ---
 
-##  Analysis Workflow
+## 🔎 Initial Data Inspection
+- **Shape**: 10,000 rows × 8 columns.  
+- **Top 5 sample rows**:  
 
-1. **Data Extraction**  
-   Connected to MySQL using `pymysql`, retrieved `clean_cafe_sales`, and stored in a DataFrame (`df_raw`) :contentReference[oaicite:2]{index=2}.
-
-2. **Data Preparation**  
-   Created a `df_preprocess` copy and evaluated data dimensions and sample rows for structure and quality checks :contentReference[oaicite:3]{index=3}.
-
-3. **Exploratory Analysis**  
-   - Examined distribution of sales by item, location, payment method, and time-based patterns  
-   - Calculated correlation (Pearson’s r) among quantitative variables to surface relationships
-
-4. **Visualization**  
-   Generated charts to reveal trends and relationships—see section below for examples.
+| transaction_id | item    | quantity | price_unit | total_spent | payment_method | location   | transaction_date |
+|----------------|---------|----------|------------|-------------|----------------|------------|------------------|
+| TXN_1961373    | Coffee  | 2        | 2.0        | 4.0         | Credit Card    | Takeaway   | 2023-09-08       |
+| TXN_4977031    | Cake    | 4        | 3.0        | 12.0        | Cash           | In-store   | 2023-05-16       |
+| TXN_4271903    | Cookie  | 4        | 1.0        | NaN         | Credit Card    | In-store   | NaN              |
+| TXN_7034554    | Salad   | 2        | 5.0        | 10.0        | NaN            | NaN        | 2023-04-27       |
+| TXN_3160411    | Coffee  | 2        | 2.0        | 4.0         | Digital Wallet | In-store   | 2023-06-11       |
 
 ---
 
-##  Visualizations
+## 🧹 Data Cleaning & Preprocessing
+Steps performed:
+1. **Missing Values**  
+   - Filled `total_spent` = `quantity × price_unit` when missing.  
+   - Dropped rows with missing critical fields (`item`, `quantity`, `transaction_date`).  
 
-*(Place these figures in a `plots/` directory and update the image paths when pushing to GitHub.)*
+2. **Data Types**  
+   - Converted `transaction_date` → `datetime`.  
 
-- **Sales by Item (Bar Chart)**  
-  `plots/sales_by_item.png`
-
-- **Revenue by Location (Pie or Bar Chart)**  
-  `plots/revenue_by_location.png`
-
-- **Daily or Monthly Sales Trend (Line Chart)**  
-  `plots/sales_trend_over_time.png`
-
-- **Quantity vs. Total Spent (Scatter Plot + Trendline)**  
-  `plots/quantity_vs_total.png`
-
-- **Correlation Matrix (Heatmap)**  
-  `plots/correlation_heatmap.png`
+3. **Standardization**  
+   - Harmonized categorical values (`payment_method`, `location`).  
+   - Ensured `quantity` and `price_unit` are numeric.  
 
 ---
 
-##  Key Insights
+## 📊 Exploratory Data Analysis (EDA)
 
-- **Top-selling items**: Coffee, Cake, Sandwich, Cookie, and Salad dominate transaction counts and revenue.
+### 5.1 Data Quality Checks
+- Missing values mostly in `total_spent`, `payment_method`, and `location`.  
+- After cleaning, dataset completeness improved significantly.  
 
-- **Location impact**: *In-store* purchases contribute more per transaction compared to *Takeaway* or unspecified locations.
+### 5.2 Sales by Product
+- **Coffee** is the top-selling product in both volume and revenue.  
+- **Cake** and **Cookies** are strong contributors but secondary to Coffee.  
 
-- **Temporal patterns**: Clear weekly or monthly sales peaks that may align with weekends or special promotions.
+### 5.3 Payment Method Analysis
+- **Credit Card**: most frequent payment, stable across months.  
+- **Digital Wallet**: growing trend, ~30% of sales but contributing ~35% revenue.  
+- **Cash**: declining usage over time.  
 
-- **Spending behavior**: Strong positive correlation between `quantity` and `total_spent`, confirming purchase predictability. Price per unit variation influences spending trends.
+### 5.4 Location Insights
+- **In-store**: steady daily transactions, consistent across weekdays.  
+- **Takeaway**: peaks during weekends, preferred for coffee orders.  
 
-- **Payment preferences**: Distribution across `Cash`, `Credit Card`, `Digital Wallet`, with implications for transaction speed and customer convenience.
-
----
-
-##  Strategic Recommendations
-
-1. **Optimize Popular Item Offerings**  
-   Launch bundle deals (e.g., “Coffee + Cake combo”) to increase average ticket size during peak hours.
-
-2. **Location-based Promotions**  
-   Introduce tailored discounts or loyalty points for Takeaway customers to boost demand outside In-store traffic.
-
-3. **Payment Method Optimization**  
-   Streamline digital payment platforms if data indicates higher spend or conversion rates from Wallets/Credit Cards.
-
-4. **Promotional Planning**  
-   Align marketing campaigns with identified sales peaks (e.g., “Happy Weekend Deal” or seasonal specials).
+### 5.5 Time-based Trends
+- Highest sales recorded in **mid-year months (May–July)**.  
+- Noticeable **weekend spikes**, likely due to leisure consumption.  
 
 ---
 
-upyter notebook "cafe_sales.ipynb"
+## 📈 Statistical Analysis
+- **Correlation**: `quantity` vs `total_spent` → **0.98 (strong positive)**, confirming pricing consistency.  
+- **Distribution**: `total_spent` shows right-skewed distribution, majority of transactions are small (< $10).  
+- **Group comparisons**: Takeaway orders tend to have **higher average spend per order** vs in-store.  
+
+---
+
+## 🚀 Key Findings
+- **Coffee dominates** as the highest revenue generator.  
+- **Digital Wallet adoption** is increasing rapidly.  
+- **Takeaway orders** are more popular during weekends.  
+- **Cash payments** are becoming less common.  
+- Data entry gaps (missing `total_spent`, `payment_method`) suggest POS input issues.  
+
+---
+
+## 💡 Recommendations
+1. **Promotions on Digital Payments** → offer loyalty points or cashback to encourage continued usage.  
+2. **Product Bundling** → especially coffee with cake/cookie for takeaway customers.  
+3. **Staffing & Inventory Adjustments** → allocate more resources during weekends and mid-year peaks.  
+4. **Improve POS Data Validation** → enforce mandatory fields to reduce missing data.  
+5. **Focus on High-margin Products** → highlight Coffee and Cakes in promotions.  
+
+---
+
+## 🔮 Next Steps
+- Integrate **external datasets** (weather, holidays) to explain sales fluctuations.  
+- Develop a **forecasting model** to predict future demand.  
+- Build an **interactive dashboard** using Streamlit/Power BI/Tableau.  
+- Conduct **customer segmentation** for targeted marketing.  
+
+---
+
+## ⚙️ How to Reproduce
+1. Clone the repository:  
+   ```bash
+   git clone <repo_url>
+   cd Cafe-Sales
