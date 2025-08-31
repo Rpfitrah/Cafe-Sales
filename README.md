@@ -76,7 +76,7 @@ Performed steps (no row deletion):
 - **Juice**: 6,435 units sold (flagship product).  
 - Cakes and Coffee follow but contribute less volume.  
 
-![Best Selling Items](images/best_selling_items.png)
+![Best Selling Items](https://github.com/Rpfitrah/Cafe-Sales/blob/4221d0fab1f518abe55d883bb03caf71e2a9ff93/image/Best%20Selling%20Item.png)
 
 ---
 
@@ -85,7 +85,7 @@ Performed steps (no row deletion):
 - **Card**: 22.73%  
 - **Cash**: 22.58%  
 
-![Payment Methods](images/payment_methods.png)
+![Payment Methods](https://github.com/Rpfitrah/Cafe-Sales/blob/4221d0fab1f518abe55d883bb03caf71e2a9ff93/image/Preferred%20Payment%20Method.png)
 
 ---
 
@@ -93,7 +93,7 @@ Performed steps (no row deletion):
 - **Takeaway**: 70%  
 - **Dine-in**: 30%  
 
-![Consumption Pattern](images/consumption_pattern.png)
+![Consumption Pattern](https://github.com/Rpfitrah/Cafe-Sales/blob/4221d0fab1f518abe55d883bb03caf71e2a9ff93/image/Preferred%20Eating%20Location.png)
 
 ---
 
@@ -101,7 +101,7 @@ Performed steps (no row deletion):
 - Revenue stable across year with **mid-year spikes** (May–July).  
 - Weekends show noticeable increase in takeaway orders.  
 
-![Monthly Sales](images/monthly_sales.png)
+![Monthly Sales](https://github.com/Rpfitrah/Cafe-Sales/blob/4221d0fab1f518abe55d883bb03caf71e2a9ff93/image/Monthly%20Sales.png)
 
 ---
 
