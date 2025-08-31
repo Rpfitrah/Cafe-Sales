@@ -12,131 +12,127 @@
 ---
 
 ## 📑 Table of Contents
-1. [Project Overview](#project-overview)  
-2. [Data Source & Loading](#data-source--loading)  
-3. [Initial Data Inspection](#initial-data-inspection)  
-4. [Data Cleaning & Preprocessing](#data-cleaning--preprocessing)  
-5. [Exploratory Data Analysis (EDA)](#exploratory-data-analysis-eda)  
-   - 5.1 Data Shape & Sample  
-   - 5.2 Missing Values & Data Quality  
-   - 5.3 Trends & Patterns  
-6. [Statistical Analysis](#statistical-analysis)  
-7. [Key Findings](#key-findings)  
-8. [Recommendations](#recommendations)  
-9. [Next Steps](#next-steps)  
-10. [How to Reproduce](#how-to-reproduce)  
-11. [Contact / About Me](#contact--about-me)
+1. [Project Overview](#-project-overview)  
+2. [Data Source & Loading](#-data-source--loading)  
+3. [Initial Data Inspection](#-initial-data-inspection)  
+4. [Data Cleaning & Preprocessing](#-data-cleaning--preprocessing)  
+5. [Exploratory Data Analysis (EDA)](#-exploratory-data-analysis-eda)  
+6. [Statistical Analysis](#-statistical-analysis)  
+7. [Key Findings](#-key-findings)  
+8. [Recommendations](#-recommendations)  
+9. [Next Steps](#-next-steps)  
+10. [How to Reproduce](#-how-to-reproduce)  
+11. [Contact / About Me](#-contact--about-me)
 
 ---
 
 ## 📌 Project Overview
-This project explores **café sales data** to uncover customer purchasing behavior, product performance, and sales trends.  
-The analysis aims to:
-- Identify **best-selling items** and their contribution to revenue.  
-- Understand **customer preferences** based on payment methods and order locations.  
-- Detect **seasonality and time-based patterns** in sales.  
-- Provide **data-driven recommendations** for business improvement.  
+This project analyzes **Café Sales Data (2023)** to uncover insights about product performance, customer behavior, and operational issues.  
+It aims to:
+- Identify **best-selling products** and their contribution to revenue.  
+- Understand **customer preferences** (payment methods, dine-in vs takeaway).  
+- Detect **daily and monthly sales trends**.  
+- Highlight **data quality issues** and operational inefficiencies.  
 
 ---
 
 ## 🗂 Data Source & Loading
-- Data is stored in a **MySQL table** named `clean_cafe_sales`.  
-- Retrieved into Python via `pymysql` and `pandas.read_sql`.  
-
-**Columns in dataset**:  
-`transaction_id`, `item`, `quantity`, `price_unit`, `total_spent`, `payment_method`, `location`, `transaction_date`
+- **Source**: Kaggle Dataset (*Cafe Sales – Dirty Data for Cleaning Training*).  
+- **Period**: Jan 1 – Dec 31, 2023.  
+- **Governance**: Anonymized and GDPR compliant.  
+- Loaded into **MySQL**, then queried into Python (`pandas` + `pymysql`).  
 
 ---
 
 ## 🔎 Initial Data Inspection
 - **Shape**: 10,000 rows × 8 columns.  
-- **Top 5 sample rows**:  
+- **Total Revenue (2023)**: **$87,768**.  
+- **Problematic Records**: 2,845 (`ERROR`, `UNKNOWN`, $0 transactions).  
 
-| transaction_id | item    | quantity | price_unit | total_spent | payment_method | location   | transaction_date |
-|----------------|---------|----------|------------|-------------|----------------|------------|------------------|
-| TXN_1961373    | Coffee  | 2        | 2.0        | 4.0         | Credit Card    | Takeaway   | 2023-09-08       |
-| TXN_4977031    | Cake    | 4        | 3.0        | 12.0        | Cash           | In-store   | 2023-05-16       |
-| TXN_4271903    | Cookie  | 4        | 1.0        | NaN         | Credit Card    | In-store   | NaN              |
-| TXN_7034554    | Salad   | 2        | 5.0        | 10.0        | NaN            | NaN        | 2023-04-27       |
-| TXN_3160411    | Coffee  | 2        | 2.0        | 4.0         | Digital Wallet | In-store   | 2023-06-11       |
+Sample records:  
+
+| transaction_id | item   | quantity | price_unit | total_spent | payment_method | location   | transaction_date |
+|----------------|--------|----------|------------|-------------|----------------|------------|------------------|
+| TXN_1961373    | Juice  | 2        | 2.0        | 4.0         | Digital Wallet | Takeaway   | 2023-09-08       |
+| TXN_4977031    | Cake   | 4        | 3.0        | 12.0        | Cash           | In-store   | 2023-05-16       |
 
 ---
 
 ## 🧹 Data Cleaning & Preprocessing
-Steps performed:
-1. **Missing Values**  
-   - Filled `total_spent` = `quantity × price_unit` when missing.  
-   - Dropped rows with missing critical fields (`item`, `quantity`, `transaction_date`).  
-
-2. **Data Types**  
-   - Converted `transaction_date` → `datetime`.  
-
-3. **Standardization**  
-   - Harmonized categorical values (`payment_method`, `location`).  
-   - Ensured `quantity` and `price_unit` are numeric.  
+Performed steps (no row deletion):  
+- **Error Handling**: Replaced `ERROR` and `UNKNOWN` with `NULL` (2,845 records).  
+- **Missing Values**:  
+  - `quantity`, `price_unit`: filled with **median**.  
+  - `total_spent`: calculated = `quantity × price_unit`.  
+  - `transaction_date`: filled with **median date**.  
+  - Categorical columns: filled with **mode**.  
+- **Transformation**: Converted `transaction_date` → datetime, created `trans_year`, `trans_month`.  
 
 ---
 
 ## 📊 Exploratory Data Analysis (EDA)
 
-### 5.1 Data Quality Checks
-- Missing values mostly in `total_spent`, `payment_method`, and `location`.  
-- After cleaning, dataset completeness improved significantly.  
+### 1. Best-Selling Products
+- **Juice**: 6,435 units sold (flagship product).  
+- Cakes and Coffee follow but contribute less volume.  
 
-### 5.2 Sales by Product
-- **Coffee** is the top-selling product in both volume and revenue.  
-- **Cake** and **Cookies** are strong contributors but secondary to Coffee.  
+![Best Selling Items](images/best_selling_items.png)
 
-### 5.3 Payment Method Analysis
-- **Credit Card**: most frequent payment, stable across months.  
-- **Digital Wallet**: growing trend, ~30% of sales but contributing ~35% revenue.  
-- **Cash**: declining usage over time.  
+---
 
-### 5.4 Location Insights
-- **In-store**: steady daily transactions, consistent across weekdays.  
-- **Takeaway**: peaks during weekends, preferred for coffee orders.  
+### 2. Payment Methods
+- **Digital Wallet**: 54.69%  
+- **Card**: 22.73%  
+- **Cash**: 22.58%  
 
-### 5.5 Time-based Trends
-- Highest sales recorded in **mid-year months (May–July)**.  
-- Noticeable **weekend spikes**, likely due to leisure consumption.  
+![Payment Methods](images/payment_methods.png)
+
+---
+
+### 3. Consumption Pattern
+- **Takeaway**: 70%  
+- **Dine-in**: 30%  
+
+![Consumption Pattern](images/consumption_pattern.png)
+
+---
+
+### 4. Sales Trend (2023)
+- Revenue stable across year with **mid-year spikes** (May–July).  
+- Weekends show noticeable increase in takeaway orders.  
+
+![Monthly Sales](images/monthly_sales.png)
 
 ---
 
 ## 📈 Statistical Analysis
-- **Correlation**: `quantity` vs `total_spent` → **0.98 (strong positive)**, confirming pricing consistency.  
-- **Distribution**: `total_spent` shows right-skewed distribution, majority of transactions are small (< $10).  
-- **Group comparisons**: Takeaway orders tend to have **higher average spend per order** vs in-store.  
+- **Descriptive Statistics**: Median and mode used for imputation.  
+- **Correlation**: `quantity` vs `total_spent` = **0.98 (very strong)**.  
+- **Time-Series Analysis**: Detected consistent trend with seasonal peaks mid-year.  
 
 ---
 
 ## 🚀 Key Findings
-- **Coffee dominates** as the highest revenue generator.  
-- **Digital Wallet adoption** is increasing rapidly.  
-- **Takeaway orders** are more popular during weekends.  
-- **Cash payments** are becoming less common.  
-- Data entry gaps (missing `total_spent`, `payment_method`) suggest POS input issues.  
+- **Juice** is the flagship product (6,435 units).  
+- **Digital Wallets** are the most preferred payment method.  
+- **Takeaway dominates** (70% vs 30% dine-in).  
+- **Total 2023 revenue**: $87,768.  
+- **Operational issues**: 2,845 problematic transactions.  
 
 ---
 
 ## 💡 Recommendations
-1. **Promotions on Digital Payments** → offer loyalty points or cashback to encourage continued usage.  
-2. **Product Bundling** → especially coffee with cake/cookie for takeaway customers.  
-3. **Staffing & Inventory Adjustments** → allocate more resources during weekends and mid-year peaks.  
-4. **Improve POS Data Validation** → enforce mandatory fields to reduce missing data.  
-5. **Focus on High-margin Products** → highlight Coffee and Cakes in promotions.  
+1. **Flagship Product Optimization** → Boost promotions for Juice; create new variants.  
+2. **Enhance Digital Experience** → Loyalty program integrated with digital wallets.  
+3. **Improve Operations** → Data validation at POS to reduce errors.  
+4. **Customer Experience** → Improve takeaway packaging & enhance dine-in atmosphere.  
+5. **Continuous Monitoring** → Build real-time dashboards + monthly performance reports.  
 
 ---
 
-## 🔮 Next Steps
-- Integrate **external datasets** (weather, holidays) to explain sales fluctuations.  
-- Develop a **forecasting model** to predict future demand.  
-- Build an **interactive dashboard** using Streamlit/Power BI/Tableau.  
-- Conduct **customer segmentation** for targeted marketing.  
+## 👩‍💻 Author
 
----
-
-## ⚙️ How to Reproduce
-1. Clone the repository:  
-   ```bash
-   git clone <repo_url>
-   cd Cafe-Sales
+**Fitrah Rahmi Putri, S.Kom**  
+📧 Email: fitrah.rahmi.putri@gmail.com  
+🔗 LinkedIn: [fitrah-rahmi-putri](https://www.linkedin.com/in/fitrah-rahmi-putri-99711a157/)  
+🔗 GitHub: [@Rpfitrah](https://github.com/Rpfitrah)
